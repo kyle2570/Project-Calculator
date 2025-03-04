@@ -1,76 +1,128 @@
 
 
+
+const MAX_DISPLAY_LENGTH = 15;
+let currentDisplayLength = 0;
+let number1, number2, operator;
+
+
+
 const buttons = document.querySelector(".container");
 
 buttons.addEventListener("click", (event) => {
 
     switch (event.target.id) {
         case "one":
-            console.log("1 was clicked");
+            display(1);
             break;
         case "two":
-            console.log("2 was clicked");
+            display(2);
             break;
         case "three":
-            console.log("3 was clicked");
+            display(3);
             break;
         case "four":
-            console.log("4 was clicked");
+            display(4);
             break;
         case "five":
-            console.log("5 was clicked");
+            display(5);
             break;
         case "six":
-            console.log("6 was clicked");
+            display(6);
             break;
         case "seven":
-            console.log("7 was clicked");
+            display(7);
             break;
         case "eight":
-            console.log("8 was clicked");
+            display(8);
             break;
         case "nine":
-            console.log("9 was clicked");
+            display(9);
             break;
         case "zero":
-            console.log("0 was clicked");
+            display(0);
             break;
         case "dot":
-            console.log("dot was clicked");
+            display(".");
             break;
 
 
         case "del":
-            console.log("DEL was clicked");
+            del();
             break;
         case "ac":
-            console.log("AC was clicked");
+            clear();
             break;
         case "x":
-            console.log("X was clicked");
             break;
         case "divide":
-            console.log("/  was clicked");
             break;
         case "plus":
-            console.log("+  was clicked");
+            display("+");
             break;
         case "minus":
-            console.log("--- was clicked");
             break;
         case "equal":
-            console.log("=  was clicked");
             break;
 
     }
 
 });
 
+function clear() {
+    let display = document.querySelector(".display");
+    display.textContent = "0";
+    currentDisplayLength = 0;
+}
+
+function del() {
+    let display = document.querySelector(".display");
+
+    if (display.textContent.length == 1) {
+        display.textContent = "0";
+        currentDisplayLength = 0;
+
+
+    } else {
+        display.textContent = display.textContent.slice(0, -1);
+        currentDisplayLength--;
+
+
+    }
+}
 
 
 
-function operate(a, b) {
-    return a + b;
+function display(key) {
+    let display = document.querySelector(".display");
+
+    if (currentDisplayLength < MAX_DISPLAY_LENGTH) {
+        if (display.textContent == "0") {
+            display.textContent = key;
+            currentDisplayLength++;
+        } else {
+            display.textContent += key;
+            currentDisplayLength++;
+        }
+    }
+
+}
+
+
+
+let display1 = document.querySelector(".display1");
+let keyPressed = document.querySelector("body");
+
+keyPressed.addEventListener("keydown", (event) => {
+    if (event.key == " ") {
+        display1.textContent = "You pressed SPACE."
+    } else { display1.textContent = `You pressed ${event.key.toUpperCase()}.` }
+});
+
+
+
+function operate(number1, number2, operator) {
+
 }
 
 
