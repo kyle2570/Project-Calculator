@@ -1,7 +1,7 @@
 
 
 
-const MAX_DISPLAY_LENGTH = 15;
+const MAX_DISPLAY_LENGTH = 12;
 let currentDisplayLength = 0;
 let number1 = 0, number2 = 0, operator;
 let operatorFlag = false;
@@ -60,16 +60,30 @@ buttons.addEventListener("click", (event) => {
         case "x":
             operator = "x";
             operatorFlag = true;
+
             if (number1 == 0) number1 = parseFloat(display.textContent);
             else number2 = parseFloat(display.textContent);
 
+            if (number1 != 0 && number2 != 0) {
+                displayResult();
+                number1 = parseFloat(display.textContent);
+            }
+            break;
+
+
+        /* old code
+            operator = "x";
+            operatorFlag = true;
+            if (number1 == 0) number1 = parseFloat(display.textContent);
+            else number2 = parseFloat(display.textContent);
+     
             if (!answerFlag && (number1 != 0 && number2 != 0)) {
                 displayResult();
                 number1 = parseFloat(display.textContent);
             }
+    */
 
 
-            break;
         case "divide":
             operator = "divide";
             operatorFlag = true;
@@ -112,8 +126,10 @@ buttons.addEventListener("click", (event) => {
         case "equal":
             number2 = parseFloat(display.textContent);
             operatorFlag = false;
+
             if (!answerFlag && (number1 != 0 && number2 != 0)) displayResult();
 
+            answerFlag = true;
 
             break;
 
@@ -123,12 +139,17 @@ buttons.addEventListener("click", (event) => {
 
 function displayResult() {
     let answer = operate(number1, number2, operator);
+
     display.textContent = Number.isInteger(answer) ? answer : parseFloat(answer.toFixed(MAX_DISPLAY_LENGTH));
+    display.textContent = formatNumber(parseFloat(display.textContent));
     answerFlag = true;
 
-
-
 }
+
+function formatNumber(num) {
+    return num >= 1e10 ? num.toExponential(10) : num;
+}
+
 
 function clear() {
 
@@ -163,7 +184,7 @@ function del() {
 
 function displayDigit(key) {
 
-    answerFlag = false;
+
 
     if (display.textContent.includes(".") && key == ".") return;
 
@@ -184,6 +205,8 @@ function displayDigit(key) {
         }
     }
 
+
+    answerFlag = false;
 }
 
 
@@ -227,7 +250,7 @@ document.addEventListener("keydown", (event) => {
             displayDigit(".");
             break;
 
-
+        case "Backspace":
         case "Delete":
             del();
             break;
