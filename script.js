@@ -4,8 +4,8 @@
 const MAX_DISPLAY_LENGTH = 12;
 let currentDisplayLength = 0;
 let number1 = 0, number2 = 0, operator;
-let operatorFlag = false;
-let answerFlag = false;
+let operatorFlag = false; // For starting a new line if operator is pressed for first time. 
+let answerFlag = false;  // For disabling delete if answer is shown by displayResult function. 
 
 
 
@@ -50,7 +50,6 @@ buttons.addEventListener("click", (event) => {
             displayDigit(".");
             break;
 
-
         case "del":
             del();
             break;
@@ -58,79 +57,19 @@ buttons.addEventListener("click", (event) => {
             clear();
             break;
         case "x":
-            operator = "x";
-            operatorFlag = true;
-
-            if (number1 == 0) number1 = parseFloat(display.textContent);
-            else number2 = parseFloat(display.textContent);
-
-            if (number1 != 0 && number2 != 0) {
-                displayResult();
-                number1 = parseFloat(display.textContent);
-            }
+            mul();
             break;
-
-
-        /* old code
-            operator = "x";
-            operatorFlag = true;
-            if (number1 == 0) number1 = parseFloat(display.textContent);
-            else number2 = parseFloat(display.textContent);
-     
-            if (!answerFlag && (number1 != 0 && number2 != 0)) {
-                displayResult();
-                number1 = parseFloat(display.textContent);
-            }
-    */
-
-
         case "divide":
-            operator = "divide";
-            operatorFlag = true;
-            if (number1 == 0) number1 = parseFloat(display.textContent);
-            else number2 = parseFloat(display.textContent);
-
-            if (!answerFlag && (number1 != 0 && number2 != 0)) {
-                displayResult();
-                number1 = parseFloat(display.textContent);
-            }
-
-
+            div();
             break;
         case "plus":
-            operator = "plus";
-            operatorFlag = true;
-            if (number1 == 0) number1 = parseFloat(display.textContent);
-            else number2 = parseFloat(display.textContent);
-
-            if (!answerFlag && (number1 != 0 && number2 != 0)) {
-                displayResult();
-                number1 = parseFloat(display.textContent);
-            }
-
-
+            plus();
             break;
         case "minus":
-            operator = "minus";
-            operatorFlag = true;
-            if (number1 == 0) number1 = parseFloat(display.textContent);
-            else number2 = parseFloat(display.textContent);
-
-            if (!answerFlag && (number1 != 0 && number2 != 0)) {
-                displayResult();
-                number1 = parseFloat(display.textContent);
-            }
-
+            minus();
             break;
-
         case "equal":
-            number2 = parseFloat(display.textContent);
-            operatorFlag = false;
-
-            if (!answerFlag && (number1 != 0 && number2 != 0)) displayResult();
-
-            answerFlag = true;
-
+            equal();
             break;
 
     }
@@ -258,32 +197,20 @@ document.addEventListener("keydown", (event) => {
             clear();
             break;
         case "*":
-            operator = "x";
-            operatorFlag = true;
-            number1 = parseFloat(display.textContent);
+            mul();
             break;
         case "/":
-            operator = "divide";
-            operatorFlag = true;
-            number1 = parseFloat(display.textContent);
+            div();
             break;
         case "+":
-            operator = "plus";
-            operatorFlag = true;
-            number1 = parseFloat(display.textContent);
+            plus();
             break;
         case "-":
-            operator = "minus";
-            operatorFlag = true;
-            number1 = parseFloat(display.textContent);
+            minus();
             break;
-
         case "=":
         case "Enter":
-            console.log(event.key);
-            number2 = parseFloat(display.textContent);
-            operatorFlag = false;
-            if (!answerFlag && (number1 != 0 && number2 != 0)) displayResult();
+            equal();
             break;
 
     }
@@ -339,4 +266,71 @@ function multiply(a, b) {
 
 function divide(a, b) {
     return a / b;
+}
+
+function div() {
+
+    operator = "divide";
+    operatorFlag = true;
+
+    if (number1 == 0) number1 = parseFloat(display.textContent);
+    else number2 = parseFloat(display.textContent);
+
+    if (number1 != 0 && number2 != 0) {
+        displayResult();
+        number1 = parseFloat(display.textContent);
+
+    }
+
+}
+
+function plus() {
+    operator = "plus";
+    operatorFlag = true;
+    if (number1 == 0) number1 = parseFloat(display.textContent);
+    else number2 = parseFloat(display.textContent);
+
+    if (number1 != 0 && number2 != 0) {
+        displayResult();
+        number1 = parseFloat(display.textContent);
+
+    }
+}
+
+
+function mul() {
+    operator = "x";
+    operatorFlag = true;
+
+    if (number1 == 0) number1 = parseFloat(display.textContent);
+    else number2 = parseFloat(display.textContent);
+
+    if (number1 != 0 && number2 != 0) {
+        displayResult();
+        number1 = parseFloat(display.textContent);
+
+    }
+}
+
+function minus() {
+    operator = "minus";
+    operatorFlag = true;
+    if (number1 == 0) number1 = parseFloat(display.textContent);
+    else number2 = parseFloat(display.textContent);
+
+    if (number1 != 0 && number2 != 0) {
+        displayResult();
+        number1 = parseFloat(display.textContent);
+
+    }
+
+}
+
+function equal() {
+    number2 = parseFloat(display.textContent);
+    operatorFlag = false;
+
+    if (number1 != 0 && number2 != 0) {
+        displayResult();
+    }
 }
