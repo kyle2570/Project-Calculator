@@ -3,47 +3,51 @@
 
 const MAX_DISPLAY_LENGTH = 15;
 let currentDisplayLength = 0;
-let number1, number2, operator;
+let number1 = 0, number2 = 0, operator;
+let operatorFlag = false;
+let answerFlag = false;
 
 
 
 const buttons = document.querySelector(".container");
+let display = document.querySelector(".display");
+
 
 buttons.addEventListener("click", (event) => {
 
     switch (event.target.id) {
         case "one":
-            display(1);
+            displayDigit(1);
             break;
         case "two":
-            display(2);
+            displayDigit(2);
             break;
         case "three":
-            display(3);
+            displayDigit(3);
             break;
         case "four":
-            display(4);
+            displayDigit(4);
             break;
         case "five":
-            display(5);
+            displayDigit(5);
             break;
         case "six":
-            display(6);
+            displayDigit(6);
             break;
         case "seven":
-            display(7);
+            displayDigit(7);
             break;
         case "eight":
-            display(8);
+            displayDigit(8);
             break;
         case "nine":
-            display(9);
+            displayDigit(9);
             break;
         case "zero":
-            display(0);
+            displayDigit(0);
             break;
         case "dot":
-            display(".");
+            displayDigit(".");
             break;
 
 
@@ -54,52 +58,126 @@ buttons.addEventListener("click", (event) => {
             clear();
             break;
         case "x":
+            operator = "x";
+            operatorFlag = true;
+            if (number1 == 0) number1 = parseFloat(display.textContent);
+            else number2 = parseFloat(display.textContent);
+
+            if (!answerFlag && (number1 != 0 && number2 != 0)) {
+                displayResult();
+                number1 = parseFloat(display.textContent);
+            }
+
+
             break;
         case "divide":
+            operator = "divide";
+            operatorFlag = true;
+            if (number1 == 0) number1 = parseFloat(display.textContent);
+            else number2 = parseFloat(display.textContent);
+
+            if (!answerFlag && (number1 != 0 && number2 != 0)) {
+                displayResult();
+                number1 = parseFloat(display.textContent);
+            }
+
+
             break;
         case "plus":
-            display("+");
+            operator = "plus";
+            operatorFlag = true;
+            if (number1 == 0) number1 = parseFloat(display.textContent);
+            else number2 = parseFloat(display.textContent);
+
+            if (!answerFlag && (number1 != 0 && number2 != 0)) {
+                displayResult();
+                number1 = parseFloat(display.textContent);
+            }
+
+
             break;
         case "minus":
+            operator = "minus";
+            operatorFlag = true;
+            if (number1 == 0) number1 = parseFloat(display.textContent);
+            else number2 = parseFloat(display.textContent);
+
+            if (!answerFlag && (number1 != 0 && number2 != 0)) {
+                displayResult();
+                number1 = parseFloat(display.textContent);
+            }
+
             break;
+
         case "equal":
+            number2 = parseFloat(display.textContent);
+            operatorFlag = false;
+            if (!answerFlag && (number1 != 0 && number2 != 0)) displayResult();
+
+
             break;
 
     }
 
 });
 
+function displayResult() {
+    let answer = operate(number1, number2, operator);
+    display.textContent = Number.isInteger(answer) ? answer : parseFloat(answer.toFixed(MAX_DISPLAY_LENGTH));
+    answerFlag = true;
+
+
+
+}
+
 function clear() {
-    let display = document.querySelector(".display");
+
     display.textContent = "0";
     currentDisplayLength = 0;
+    number1 = 0;
+    number2 = 0;
+    answerFlag = false;
+    operatorFlag = false;
+
 }
 
 function del() {
-    let display = document.querySelector(".display");
 
-    if (display.textContent.length == 1) {
-        display.textContent = "0";
-        currentDisplayLength = 0;
+    if (!answerFlag) {
+
+        if (display.textContent.length == 1) {
+            display.textContent = "0";
+            currentDisplayLength = 0;
+
+        } else {
+            display.textContent = display.textContent.slice(0, -1);
+            currentDisplayLength--;
 
 
-    } else {
-        display.textContent = display.textContent.slice(0, -1);
-        currentDisplayLength--;
-
+        }
 
     }
 }
 
 
 
-function display(key) {
-    let display = document.querySelector(".display");
+function displayDigit(key) {
+
+    answerFlag = false;
+
+    if (display.textContent.includes(".") && key == ".") return;
+
 
     if (currentDisplayLength < MAX_DISPLAY_LENGTH) {
-        if (display.textContent == "0") {
+
+
+        if (display.textContent == "0" && key == ".") {
+            display.textContent += key;
+            currentDisplayLength++;
+        } else if (display.textContent == "0" || operatorFlag == true) {
             display.textContent = key;
             currentDisplayLength++;
+            operatorFlag = false;
         } else {
             display.textContent += key;
             currentDisplayLength++;
@@ -110,19 +188,113 @@ function display(key) {
 
 
 
-let display1 = document.querySelector(".display1");
-let keyPressed = document.querySelector("body");
 
-keyPressed.addEventListener("keydown", (event) => {
-    if (event.key == " ") {
-        display1.textContent = "You pressed SPACE."
-    } else { display1.textContent = `You pressed ${event.key.toUpperCase()}.` }
+
+document.addEventListener("keydown", (event) => {
+
+    switch (event.key) {
+        case "1":
+            displayDigit(1);
+            break;
+        case "2":
+            displayDigit(2);
+            break;
+        case "3":
+            displayDigit(3);
+            break;
+        case "4":
+            displayDigit(4);
+            break;
+        case "5":
+            displayDigit(5);
+            break;
+        case "6":
+            displayDigit(6);
+            break;
+        case "7":
+            displayDigit(7);
+            break;
+        case "8":
+            displayDigit(8);
+            break;
+        case "9":
+            displayDigit(9);
+            break;
+        case "0":
+            displayDigit(0);
+            break;
+        case ".":
+            displayDigit(".");
+            break;
+
+
+        case "Delete":
+            del();
+            break;
+        case "End":
+            clear();
+            break;
+        case "*":
+            operator = "x";
+            operatorFlag = true;
+            number1 = parseFloat(display.textContent);
+            break;
+        case "/":
+            operator = "divide";
+            operatorFlag = true;
+            number1 = parseFloat(display.textContent);
+            break;
+        case "+":
+            operator = "plus";
+            operatorFlag = true;
+            number1 = parseFloat(display.textContent);
+            break;
+        case "-":
+            operator = "minus";
+            operatorFlag = true;
+            number1 = parseFloat(display.textContent);
+            break;
+
+        case "=":
+        case "Enter":
+            console.log(event.key);
+            number2 = parseFloat(display.textContent);
+            operatorFlag = false;
+            if (!answerFlag && (number1 != 0 && number2 != 0)) displayResult();
+            break;
+
+    }
 });
 
 
+document.addEventListener("keyup", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        event.target.blur();
+    }
+});
 
-function operate(number1, number2, operator) {
+document.addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        event.target.blur();
+    }
+});
 
+
+function operate(numb1, numb2, operator) {
+    switch (operator) {
+        case "x":
+            return multiply(numb1, numb2);
+            break;
+        case "divide":
+            return divide(numb1, numb2);
+            break;
+        case "plus":
+            return add(numb1, numb2);
+            break;
+        case "minus":
+            return subtract(numb1, numb2);
+            break;
+    }
 }
 
 
