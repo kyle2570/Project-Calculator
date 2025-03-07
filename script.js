@@ -1,19 +1,33 @@
 
 
 
-const MAX_DISPLAY_LENGTH = 12;
-let currentDisplayLength = 0;
-let number1 = 0, number2 = 0, operator;
+const MAX_DISPLAY_LENGTH = 15;
+let number1 = 0, number2 = 0, currentNumber = 0, operator = 0, answer = 0;
 let operatorFlag = false; // For starting a new line if operator is pressed for first time. 
-let answerFlag = false;  // For disabling delete if answer is shown by displayResult function. 
+let answerFlag = false;  // For disabling delete if answer is shown by operate function. 
+let hasFirstOperand = false;
+
 
 
 
 const buttons = document.querySelector(".container");
 let display = document.querySelector(".display");
 
+//Tests
+let test1 = document.querySelector("#test1");
+let test2 = document.querySelector("#test2");
+let test3 = document.querySelector("#test3");
+let test4 = document.querySelector("#test4");
+let test5 = document.querySelector("#test5");
+let test6 = document.querySelector("#test6");
+let test7 = document.querySelector("#test7");
+
+
 
 buttons.addEventListener("click", (event) => {
+
+
+
 
     switch (event.target.id) {
         case "one":
@@ -74,6 +88,16 @@ buttons.addEventListener("click", (event) => {
 
     }
 
+
+    //Tests
+    test1.textContent = number1;
+    test2.textContent = number2;
+    test3.textContent = operator;
+    test4.textContent = currentNumber;
+    test5.textContent = operatorFlag;
+    test6.textContent = hasFirstOperand;
+    test7.textContent = answerFlag;
+
 });
 
 function displayResult() {
@@ -85,19 +109,24 @@ function displayResult() {
 
 }
 
-function formatNumber(num) {
-    return num >= 1e10 ? num.toExponential(10) : num;
-}
+
+
 
 
 function clear() {
 
     display.textContent = "0";
-    currentDisplayLength = 0;
+
     number1 = 0;
     number2 = 0;
+    currentNumber = 0;
+    operator = 0;
+    answer = 0;
     answerFlag = false;
     operatorFlag = false;
+    hasFirstOperand = false;
+    hasSecondOperand = false;
+
 
 }
 
@@ -107,46 +136,46 @@ function del() {
 
         if (display.textContent.length == 1) {
             display.textContent = "0";
-            currentDisplayLength = 0;
 
         } else {
             display.textContent = display.textContent.slice(0, -1);
-            currentDisplayLength--;
-
-
         }
 
+        //} else if (display.textContent == "0" || operatorFlag == true) {
+        //     display.textContent = key;
+
+        //     operatorFlag = false;
     }
+
 }
+
 
 
 
 function displayDigit(key) {
 
 
+    if (display.textContent.length < MAX_DISPLAY_LENGTH) {
+        if (operatorFlag || answerFlag) {//Starts a new line if operator flag is ON or answer flag is ON.
 
-    if (display.textContent.includes(".") && key == ".") return;
+            if (key == ".") display.textContent = "0" + key;
+            else display.textContent = key;
 
-
-    if (currentDisplayLength < MAX_DISPLAY_LENGTH) {
-
-
-        if (display.textContent == "0" && key == ".") {
-            display.textContent += key;
-            currentDisplayLength++;
-        } else if (display.textContent == "0" || operatorFlag == true) {
-            display.textContent = key;
-            currentDisplayLength++;
-            operatorFlag = false;
         } else {
-            display.textContent += key;
-            currentDisplayLength++;
+
+            if (display.textContent.includes(".") && key == ".") return; // if "." exists, Prevent "." enters twice. 
+            else if (display.textContent == "0" && key == ".") display.textContent += key; // "." after initial 0.
+            else if (display.textContent == "0") display.textContent = key; // First digit to replace inital 0. 
+            else display.textContent += key;  // Appending digit to exiting number. 
         }
     }
 
-
+    currentNumber = display.textContent;
     answerFlag = false;
+    operatorFlag = false;
 }
+
+
 
 
 
@@ -231,20 +260,43 @@ document.addEventListener("click", (event) => {
 
 
 function operate(numb1, numb2, operator) {
-    switch (operator) {
-        case "x":
-            return multiply(numb1, numb2);
-            break;
-        case "divide":
-            return divide(numb1, numb2);
-            break;
-        case "plus":
-            return add(numb1, numb2);
-            break;
-        case "minus":
-            return subtract(numb1, numb2);
-            break;
+
+    let answer = 0;
+
+    numb1 = Number(numb1);
+    numb2 = Number(numb2);
+
+    if (!answerFlag) {
+
+        switch (operator) {
+            case "x":
+                answer = multiply(numb1, numb2);
+                break;
+            case "divide":
+                answer = divide(numb1, numb2);
+                break;
+            case "plus":
+                answer = add(numb1, numb2);
+                break;
+            case "minus":
+                answer = subtract(numb1, numb2);
+                break;
+        }
+
     }
+
+
+    display.textContent = Number.isInteger(answer) ? answer : parseFloat(answer.toFixed(MAX_DISPLAY_LENGTH));
+    display.textContent = formatNumber(parseFloat(display.textContent));
+    currentNumber = display.textContent;
+
+    return answer;
+
+}
+
+
+function formatNumber(num) {
+    return num >= 1e10 ? num.toExponential(10) : num;
 }
 
 
@@ -261,76 +313,62 @@ function subtract(a, b) {
 
 function multiply(a, b) {
     return a * b;
-}
 
+}
 
 function divide(a, b) {
     return a / b;
 }
 
 function div() {
-
-    operator = "divide";
-    operatorFlag = true;
-
-    if (number1 == 0) number1 = parseFloat(display.textContent);
-    else number2 = parseFloat(display.textContent);
-
-    if (number1 != 0 && number2 != 0) {
-        displayResult();
-        number1 = parseFloat(display.textContent);
-
-    }
-
+    handleOperator("divide");
 }
 
 function plus() {
-    operator = "plus";
-    operatorFlag = true;
-    if (number1 == 0) number1 = parseFloat(display.textContent);
-    else number2 = parseFloat(display.textContent);
-
-    if (number1 != 0 && number2 != 0) {
-        displayResult();
-        number1 = parseFloat(display.textContent);
-
-    }
+    handleOperator("plus");
 }
 
-
 function mul() {
-    operator = "x";
-    operatorFlag = true;
-
-    if (number1 == 0) number1 = parseFloat(display.textContent);
-    else number2 = parseFloat(display.textContent);
-
-    if (number1 != 0 && number2 != 0) {
-        displayResult();
-        number1 = parseFloat(display.textContent);
-
-    }
+    handleOperator("x");
 }
 
 function minus() {
-    operator = "minus";
-    operatorFlag = true;
-    if (number1 == 0) number1 = parseFloat(display.textContent);
-    else number2 = parseFloat(display.textContent);
+    handleOperator("minus");
+}
 
-    if (number1 != 0 && number2 != 0) {
-        displayResult();
-        number1 = parseFloat(display.textContent);
+function handleOperator(op) {
 
+    operator = op;
+
+    if (!operatorFlag && !hasFirstOperand) {
+        number1 = display.textContent;
+        hasFirstOperand = true;
+    } else if (!operatorFlag && !answerFlag) {
+        number2 = display.textContent;
+        operate(number1, number2, operator);
+        number1 = display.textContent;
+        number2 = 0;
+        hasFirstOperand = true;
     }
 
+    operatorFlag = true;
+    answerFlag = false;
+
 }
+
 
 function equal() {
-    number2 = parseFloat(display.textContent);
+
+    if (!answerFlag && operator != 0) {
+        let answer = operate(number1, currentNumber, operator);
+        number1 = answer;
+        if (answer != 0) answerFlag = true;
+        operator = 0;
+
+
+    }
+
     operatorFlag = false;
 
-    if (number1 != 0 && number2 != 0) {
-        displayResult();
-    }
 }
+
