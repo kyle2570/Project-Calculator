@@ -305,7 +305,7 @@ function operate(numb1, numb2, operator) {
                 break;
             case "/":
                 if (numb2 == 0) {
-                    console.log(numb2);
+
                     display.textContent = "MATH ERROR";
                     return;
                     // firstOperent = 0;
