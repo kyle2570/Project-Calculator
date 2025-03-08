@@ -2,29 +2,17 @@
 
 const MAX_DISPLAY_LENGTH = 15;
 let number1 = 0, number2 = 0, operator = 0, answer = 0;
-let operatorFlag = false; // For starting a new line if operator is pressed for first time. 
-let answerFlag = false;  // For disabling delete if answer is shown by operate function. 
+let operatorFlag = false; // For starting a new line and disabling delete  if operator is selected. 
+let answerFlag = false;  // For disabling delete if answer is shown. 
 let hasFirstOperand = false;
 
 
 const buttons = document.querySelector(".container");
 let display = document.querySelector(".display");
 
-//Tests
-let test1 = document.querySelector("#test1");
-let test2 = document.querySelector("#test2");
-let test3 = document.querySelector("#test3");
-let test4 = document.querySelector("#test4");
-let test5 = document.querySelector("#test5");
-let test6 = document.querySelector("#test6");
-let test7 = document.querySelector("#test7");
-
 
 
 buttons.addEventListener("click", (event) => {
-
-
-
 
     switch (event.target.id) {
         case "one":
@@ -84,15 +72,6 @@ buttons.addEventListener("click", (event) => {
             break;
     }
 
-
-    //Tests
-    test1.textContent = number1;
-    test2.textContent = number2;
-    test3.textContent = operator;
-
-    test5.textContent = operatorFlag;
-    test6.textContent = hasFirstOperand;
-    test7.textContent = answerFlag;
 
 });
 
@@ -212,14 +191,6 @@ document.addEventListener("keydown", (event) => {
 
     }
 
-    //Debugging
-    test1.textContent = number1;
-    test2.textContent = number2;
-    test3.textContent = operator;
-
-    test5.textContent = operatorFlag;
-    test6.textContent = hasFirstOperand;
-    test7.textContent = answerFlag;
 });
 
 
