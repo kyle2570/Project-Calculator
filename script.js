@@ -1,13 +1,10 @@
 
 
-
 const MAX_DISPLAY_LENGTH = 15;
-let number1 = 0, number2 = 0, currentNumber = 0, operator = 0, answer = 0;
+let number1 = 0, number2 = 0, operator = 0, answer = 0;
 let operatorFlag = false; // For starting a new line if operator is pressed for first time. 
 let answerFlag = false;  // For disabling delete if answer is shown by operate function. 
 let hasFirstOperand = false;
-
-
 
 
 const buttons = document.querySelector(".container");
@@ -67,7 +64,7 @@ buttons.addEventListener("click", (event) => {
         case "del":
             del();
             break;
-        case "ac":
+        case "clear":
             clear();
             break;
         case "x":
@@ -85,7 +82,6 @@ buttons.addEventListener("click", (event) => {
         case "equal":
             equal();
             break;
-
     }
 
 
@@ -93,23 +89,12 @@ buttons.addEventListener("click", (event) => {
     test1.textContent = number1;
     test2.textContent = number2;
     test3.textContent = operator;
-    test4.textContent = currentNumber;
+
     test5.textContent = operatorFlag;
     test6.textContent = hasFirstOperand;
     test7.textContent = answerFlag;
 
 });
-
-function displayResult() {
-    let answer = operate(number1, number2, operator);
-
-    display.textContent = Number.isInteger(answer) ? answer : parseFloat(answer.toFixed(MAX_DISPLAY_LENGTH));
-    display.textContent = formatNumber(parseFloat(display.textContent));
-    answerFlag = true;
-
-}
-
-
 
 
 
@@ -119,40 +104,18 @@ function clear() {
 
     number1 = 0;
     number2 = 0;
-    currentNumber = 0;
     operator = 0;
     answer = 0;
     answerFlag = false;
     operatorFlag = false;
     hasFirstOperand = false;
     hasSecondOperand = false;
-
-
 }
-
-function del() {
-
-    if (!answerFlag) {
-
-        if (display.textContent.length == 1) {
-            display.textContent = "0";
-
-        } else {
-            display.textContent = display.textContent.slice(0, -1);
-        }
-
-        //} else if (display.textContent == "0" || operatorFlag == true) {
-        //     display.textContent = key;
-
-        //     operatorFlag = false;
-    }
-
-}
-
-
 
 
 function displayDigit(key) {
+
+    if (display.textContent == "MATH ERROR") return;
 
 
     if (display.textContent.length < MAX_DISPLAY_LENGTH) {
@@ -170,7 +133,9 @@ function displayDigit(key) {
         }
     }
 
-    currentNumber = display.textContent;
+    if (hasFirstOperand) number2 = display.textContent;
+
+
     answerFlag = false;
     operatorFlag = false;
 }
@@ -182,6 +147,9 @@ function displayDigit(key) {
 
 
 document.addEventListener("keydown", (event) => {
+
+
+
 
     switch (event.key) {
         case "1":
@@ -243,9 +211,19 @@ document.addEventListener("keydown", (event) => {
             break;
 
     }
+
+    //Debugging
+    test1.textContent = number1;
+    test2.textContent = number2;
+    test3.textContent = operator;
+
+    test5.textContent = operatorFlag;
+    test6.textContent = hasFirstOperand;
+    test7.textContent = answerFlag;
 });
 
 
+//Remove focus on buttons
 document.addEventListener("keyup", (event) => {
     if (event.target.tagName === "BUTTON") {
         event.target.blur();
@@ -259,44 +237,10 @@ document.addEventListener("click", (event) => {
 });
 
 
-function operate(numb1, numb2, operator) {
-
-    let answer = 0;
-
-    numb1 = Number(numb1);
-    numb2 = Number(numb2);
-
-    if (!answerFlag) {
-
-        switch (operator) {
-            case "x":
-                answer = multiply(numb1, numb2);
-                break;
-            case "divide":
-                answer = divide(numb1, numb2);
-                break;
-            case "plus":
-                answer = add(numb1, numb2);
-                break;
-            case "minus":
-                answer = subtract(numb1, numb2);
-                break;
-        }
-
-    }
-
-
-    display.textContent = Number.isInteger(answer) ? answer : parseFloat(answer.toFixed(MAX_DISPLAY_LENGTH));
-    display.textContent = formatNumber(parseFloat(display.textContent));
-    currentNumber = display.textContent;
-
-    return answer;
-
-}
 
 
 function formatNumber(num) {
-    return num >= 1e10 ? num.toExponential(10) : num;
+    return num >= 1e5 ? num.toExponential(5) : num;
 }
 
 
@@ -321,24 +265,23 @@ function divide(a, b) {
 }
 
 function div() {
-    handleOperator("divide");
+    handleOperator("/");
 }
 
 function plus() {
-    handleOperator("plus");
+    handleOperator("+");
 }
 
 function mul() {
-    handleOperator("x");
+    handleOperator("*");
 }
 
 function minus() {
-    handleOperator("minus");
+    handleOperator("-");
 }
 
 function handleOperator(op) {
 
-    operator = op;
 
     if (!operatorFlag && !hasFirstOperand) {
         number1 = display.textContent;
@@ -350,7 +293,7 @@ function handleOperator(op) {
         number2 = 0;
         hasFirstOperand = true;
     }
-
+    operator = op;
     operatorFlag = true;
     answerFlag = false;
 
@@ -359,8 +302,11 @@ function handleOperator(op) {
 
 function equal() {
 
+    if (display.textContent == "MATH ERROR") return;
+
     if (!answerFlag && operator != 0) {
-        let answer = operate(number1, currentNumber, operator);
+        number2 = display.textContent;
+        let answer = operate(number1, number2, operator);
         number1 = answer;
         if (answer != 0) answerFlag = true;
         operator = 0;
@@ -372,3 +318,68 @@ function equal() {
 
 }
 
+
+function operate(numb1, numb2, operator) {
+
+    let answer = 0;
+
+    numb1 = Number(numb1);
+    numb2 = Number(numb2);
+
+    if (!answerFlag) {
+
+        switch (operator) {
+            case "*":
+                answer = multiply(numb1, numb2);
+                break;
+            case "/":
+                if (numb2 == 0) {
+                    console.log(numb2);
+                    display.textContent = "MATH ERROR";
+                    return;
+                    // firstOperent = 0;
+                    // answerFlag = false;
+                } else {
+                    answer = divide(numb1, numb2);
+                    break;
+                }
+            case "+":
+                answer = add(numb1, numb2);
+                break;
+            case "-":
+                answer = subtract(numb1, numb2);
+                break;
+        }
+
+    }
+
+
+    display.textContent = Number.isInteger(answer) ? answer : parseFloat(answer.toFixed(MAX_DISPLAY_LENGTH - 3));
+    display.textContent = formatNumber(parseFloat(display.textContent));
+
+
+    return answer;
+
+}
+
+
+function del() {
+
+    if (!answerFlag && !operatorFlag) {
+
+        if (display.textContent.length == 1) {
+            display.textContent = "0";
+
+        } else {
+            display.textContent = display.textContent.slice(0, -1);
+        }
+
+
+        if (!hasFirstOperand) number1 = display.textContent;
+        else number2 = display.textContent
+
+
+
+    }
+
+}
